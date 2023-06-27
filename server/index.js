@@ -51,7 +51,7 @@ const applicants = [
 
 // TODO: Write a prompt to reword job descriptions based on applicant experiences/details
 const rewordPrompt = (jobDesc, applicant) => {
-    return `Please reformat the job description so that it matches shared attributes with the applicant. The job description is "${jobDesc}" and the applicant has these experiences: "${applicant.experiences}"`
+    return `Please reword the shared attributes in the job description to appeal to the applicant's experiences without changing the job itself. The job description is "${jobDesc}" and the applicant has these experiences: "${applicant.experiences}"`
 }
 
 // TODO: Write a prompt to filter out unrelated applicant experiences/details
@@ -88,6 +88,7 @@ app.post('/filter', async (req, res) => {
             ],
             temperature: 0.6,
         });
+        console.log({ result: completion.data.choices[0].message })
         res.status(200).json({ result: completion.data.choices[0].message });
     } catch (error) {
         // Consider adjusting the error handling logic for your use case
@@ -129,6 +130,7 @@ app.post('/reword', async (req, res) => {
             ],
             temperature: 0.6,
         });
+        console.log({ result: completion.data.choices[0].message })
         res.status(200).json({ result: completion.data.choices[0].message });
     } catch (error) {
         // Consider adjusting the error handling logic for your use case
@@ -148,20 +150,4 @@ app.post('/reword', async (req, res) => {
 
 app.listen(PORT, async () => {
     console.log(`Server listening on ${PORT}`);
-
-    try {
-        const completion = await openai.createChatCompletion({
-            model: "gpt-3.5-turbo-16k-0613",
-            messages: [ {role: "system", content: initialPrompt()} ],
-            temperature: 0.6,
-        });
-        console.log({ result: completion.data.choices[0].message });
-    } catch (error) {
-        // Consider adjusting the error handling logic for your use case
-        if (error.response) {
-            console.error(error.response.status, error.response.data);
-        } else {
-            console.error(`Error with OpenAI API request: ${error.message}`);
-        }
-    }
 });
